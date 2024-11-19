@@ -6,11 +6,15 @@ The wrapper uses [Tracy-CSharp](https://github.com/clibequilibrium/Tracy-CSharp)
 
 ## Installation
 
+
+#### Get Tracy Profiler
+
+This wrapper only supports Tracy v0.11.1. [Download here.](https://github.com/wolfpld/tracy/releases/tag/v0.11.1)
+
 #### From source
 
 1) Clone this repository via URL: https://github.com/AugsEU/TracyWrapper.git
 2) Add the .csproj to your solution.
-
 
 ## Usage
 
