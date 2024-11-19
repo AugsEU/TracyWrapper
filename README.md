@@ -4,8 +4,9 @@ This repository contains a C# wrapper for the [Tracy Profiler](https://github.co
 
 The wrapper uses [Tracy-CSharp](https://github.com/clibequilibrium/Tracy-CSharp) bindings to interface with Tracy.
 
-## Installation
+![Example game profile](https://i.imgur.com/aQI7t7z.png)
 
+## Installation
 
 #### Get Tracy Profiler
 
