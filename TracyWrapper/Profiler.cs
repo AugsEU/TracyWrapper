@@ -49,7 +49,7 @@ namespace TracyWrapper
 		/// <param name="lineNumber">Override line number. Recommended to leave blank for caller's line number.</param>
 		/// <param name="function">Override function name. Recommended to leave blank for caller's function name.</param>
 		/// <param name="sourceFile">Override source file name. Recommended to leave blank for caller's source file name.</param>
-		public static void PushProfileScope(string name, Color? color = null, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string function = "", [CallerFilePath] string sourceFile = "")
+		public static void PushProfileZone(string name, Color? color = null, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string function = "", [CallerFilePath] string sourceFile = "")
 		{
 			if (!mEnabled) return;
 
@@ -75,7 +75,7 @@ namespace TracyWrapper
 		/// <summary>
 		/// End previous profile region.
 		/// </summary>
-		public static void PopProfileScope()
+		public static void PopProfileZone()
 		{
 			if (!mEnabled) return;
 
@@ -113,7 +113,7 @@ namespace TracyWrapper
 		/// <param name="sourceFile">Override source file name. Recommended to leave blank for caller's source file name.</param>
 		public ProfileScope(string name, Color color, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string function = "", [CallerFilePath] string sourceFile = "")
 		{
-			Profiler.PushProfileScope(name, color, lineNumber, function, sourceFile);
+			Profiler.PushProfileZone(name, color, lineNumber, function, sourceFile);
 		}
 
 
@@ -127,7 +127,7 @@ namespace TracyWrapper
 		/// <param name="sourceFile">Override source file name. Recommended to leave blank for caller's source file name.</param>
 		public ProfileScope(string name, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string function = "", [CallerFilePath] string sourceFile = "")
 		{
-			Profiler.PushProfileScope(name, Color.AliceBlue, lineNumber, function, sourceFile);
+			Profiler.PushProfileZone(name, Color.AliceBlue, lineNumber, function, sourceFile);
 		}
 
 
@@ -137,7 +137,7 @@ namespace TracyWrapper
 		/// </summary>
 		public void Dispose()
 		{
-			Profiler.PopProfileScope();
+			Profiler.PopProfileZone();
 		}
 	}
 }
