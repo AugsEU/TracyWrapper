@@ -11,7 +11,18 @@ The wrapper uses [Tracy-CSharp](https://github.com/clibequilibrium/Tracy-CSharp)
 
 This wrapper only supports Tracy v0.11.1. [Download here.](https://github.com/wolfpld/tracy/releases/tag/v0.11.1)
 
-#### From source
+#### Nuget
+
+[![NuGet ver](https://img.shields.io/nuget/v/TracyWrapper)](https://www.nuget.org/packages/TracyWrapper)
+Get on nuget: https://www.nuget.org/packages/TracyWrapper
+
+Or run in the pakcage manager:
+
+```
+NuGet\Install-Package TracyWrapper -Version 0.11.1
+```
+
+#### Or from source
 
 1) Clone this repository via URL: https://github.com/AugsEU/TracyWrapper.git
 2) Add the .csproj to your solution.
