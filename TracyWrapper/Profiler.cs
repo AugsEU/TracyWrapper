@@ -7,8 +7,56 @@ namespace TracyWrapper
 {
 	public static class Profiler
 	{
+		#region rMembers
+
+		// These are threadlocal. But we add an initialiser to stop a warning. But! The initialiser is ignored, calling InitThread is required for each thread.
+		[ThreadStatic] 
 		private static Stack<PInvoke.TracyCZoneContext> mScopeStack = new Stack<PInvoke.TracyCZoneContext>();
-		private static bool mEnabled = true;
+
+		[ThreadStatic]
+		private static bool mEnabled;
+
+		#endregion rMembers
+
+
+
+
+
+		#region rInit
+
+		/// <summary>
+		/// Call this once per thread before starting the profiler.
+		/// </summary>
+		/// <param name="threadName">Set this for a custom thread display name.</param>
+		public static void InitThread(string? threadName = null)
+		{
+			if(threadName is null)
+			{
+				threadName = Thread.CurrentThread.Name;
+
+				if (threadName is null)
+				{
+					threadName = string.Format("Thread_{0}", Thread.CurrentThread.ManagedThreadId);
+				}
+			}
+
+			SetThreadName(threadName);
+			mScopeStack = new Stack<PInvoke.TracyCZoneContext>();
+
+			mEnabled = true;
+		}
+
+
+
+		/// <summary>
+		/// Inform tracy of custom thread name
+		/// </summary>
+		/// <param name="name"></param>
+		private static void SetThreadName(string name)
+		{
+			PInvoke.TracySetThreadName(CString.FromString(name));
+		}
+
 
 
 		/// <summary>
@@ -18,7 +66,7 @@ namespace TracyWrapper
 		/// <exception cref="Exception">Cannot disable profiler while profiling scopes are pushed.</exception>
 		public static void SetEnabled(bool enabled)
 		{
-			if(!enabled && mScopeStack.Count > 0)
+			if (!enabled && mScopeStack.Count > 0)
 			{
 				throw new Exception("Cannot disable profiler while profiling scopes are pushed. Consider turning this off between frames");
 			}
@@ -26,7 +74,13 @@ namespace TracyWrapper
 			mEnabled = enabled;
 		}
 
+		#endregion rInit
 
+
+
+
+
+		#region rFrame
 
 		/// <summary>
 		/// This needs to be called once every frame.
@@ -36,10 +90,15 @@ namespace TracyWrapper
 		{
 			if (!mEnabled) return;
 
-			PInvoke.TracyEmitFrameMarkStart(CString.FromString(name));
+			PInvoke.TracyEmitFrameMark(CString.FromString(name));
 		}
 
+		#endregion rFrame
 
+
+
+
+		#region rCPUZones
 
 		/// <summary>
 		/// Begin profile region.
@@ -49,7 +108,7 @@ namespace TracyWrapper
 		/// <param name="lineNumber">Override line number. Recommended to leave blank for caller's line number.</param>
 		/// <param name="function">Override function name. Recommended to leave blank for caller's function name.</param>
 		/// <param name="sourceFile">Override source file name. Recommended to leave blank for caller's source file name.</param>
-		public static void PushProfileZone(string name, Color? color = null, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string function = "", [CallerFilePath] string sourceFile = "")
+		public static void PushProfileZone(string name, uint color = ZoneC.DEFAULT, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string function = "", [CallerFilePath] string sourceFile = "")
 		{
 			if (!mEnabled) return;
 
@@ -64,9 +123,9 @@ namespace TracyWrapper
 
 			PInvoke.TracyCZoneContext ctx = PInvoke.TracyEmitZoneBeginAlloc(srcloc, 1);
 
-			if (color.HasValue)
+			if(color != ZoneC.DEFAULT)
 			{
-				PInvoke.TracyEmitZoneColor(ctx, GetTracyColorUInt(color.Value));
+				PInvoke.TracyEmitZoneColor(ctx, color);
 			}
 
 			mScopeStack.Push(ctx);
@@ -86,60 +145,6 @@ namespace TracyWrapper
 			PInvoke.TracyEmitZoneEnd(ctx);
 		}
 
-
-
-		/// <summary>
-		/// Utility function to get tracy color uint format from Microsoft Color
-		/// </summary>
-		private static uint GetTracyColorUInt(Color color)
-		{
-			return (uint)color.ToArgb();
-		}
-	}
-
-
-
-	/// <summary>
-	/// Object which can profile a scope automatically.
-	/// Use inside a "using" statement.
-	/// </summary>
-	public class ProfileScope : IDisposable
-	{
-		/// <summary>
-		/// Create a profile scope object.
-		/// </summary>
-		/// <param name="name">Display name</param>
-		/// <param name="color">Display color</param>
-		/// <param name="lineNumber">Override line number. Recommended to leave blank for caller's line number.</param>
-		/// <param name="function">Override function name. Recommended to leave blank for caller's function name.</param>
-		/// <param name="sourceFile">Override source file name. Recommended to leave blank for caller's source file name.</param>
-		public ProfileScope(string name, Color color, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string function = "", [CallerFilePath] string sourceFile = "")
-		{
-			Profiler.PushProfileZone(name, color, lineNumber, function, sourceFile);
-		}
-
-
-
-		/// <summary>
-		/// Create a profile scope object.
-		/// </summary>
-		/// <param name="name">Display name</param>
-		/// <param name="lineNumber">Override line number. Recommended to leave blank for caller's line number.</param>
-		/// <param name="function">Override function name. Recommended to leave blank for caller's function name.</param>
-		/// <param name="sourceFile">Override source file name. Recommended to leave blank for caller's source file name.</param>
-		public ProfileScope(string name, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string function = "", [CallerFilePath] string sourceFile = "")
-		{
-			Profiler.PushProfileZone(name, null, lineNumber, function, sourceFile);
-		}
-
-
-
-		/// <summary>
-		/// Dispose of the profile scope and end the timing.
-		/// </summary>
-		public void Dispose()
-		{
-			Profiler.PopProfileZone();
-		}
+		#endregion rCPUZones
 	}
 }
