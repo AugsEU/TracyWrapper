@@ -17,7 +17,7 @@ This wrapper only supports Tracy v0.11.1. [Download here.](https://github.com/wo
 [![NuGet ver](https://img.shields.io/nuget/v/TracyWrapper)](https://www.nuget.org/packages/TracyWrapper)
 Get on nuget: https://www.nuget.org/packages/TracyWrapper
 
-Or run in the pakcage manager:
+Or run in the package manager:
 
 ```
 NuGet\Install-Package TracyWrapper -Version 0.11.1
@@ -62,11 +62,11 @@ public void PollInputs(TimeSpan timeStamp)
 }
 ```
 
-Make sure you don't forget to pop the profile zone of the profiler will crash.
+Make sure you don't forget to pop the profile zone or the profiler will crash.
 
 ### 3. Profile a block using the ProfileScope class
 
-Push a zone to begin profiling a section of code. Pop the zone when the section is over. This can be more convinient but is less accurate, due to the overhead of allocating `TracyWrapper.ProfileScope`.
+Push a zone to begin profiling a section of code. Pop the zone when the section is over. This can be more convenient but is less accurate, due to the overhead of allocating `TracyWrapper.ProfileScope`.
 
 E.g.
 
@@ -84,7 +84,7 @@ public void PollInputs(TimeSpan timeStamp)
 
 ## Profiling accuracy
 
-The Tracy profiler running natively on C++ is extremely accurate. Propertedly it is nanosecond accurate.
+The Tracy profiler running natively on C++ is extremely accurate. Purportedly it is nanosecond accurate.
 
 Using Tracy through this C# wrapper is much less accurate, due to the fact we must allocate strings to begin a profiling block, and then interface with the C++ code through bindings.
 
