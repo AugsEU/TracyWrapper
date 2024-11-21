@@ -13,6 +13,7 @@ static class Program
 {
 	const string INPUT_PROJ = @"TracyWrapper\TracyWrapper.csproj";
 	const string OUTPUT_FOLDER = @"TracyWrapperStubs\";
+	const string METHOD_NULL_COMMENT = "/// <summary> This method is a stub that does nothing. </summary>";
 
 	static async Task Main(string[] args)
 	{
@@ -120,7 +121,7 @@ static class Program
 					// Generate the stub signature (with no implementation)
 					string stub = GenerateConstructorStub(constructor);
 
-					outCode += string.Format("\n\t\t{0}\n", stub);
+					outCode += string.Format("\n\t\t{0}\n\t\t{1}\n", METHOD_NULL_COMMENT, stub);
 				}
 
 				// Methods
@@ -137,7 +138,7 @@ static class Program
 					// Generate the stub signature (with no implementation)
 					string stub = GenerateMethodStub(method);
 
-					outCode += string.Format("\n\t\t{0}\n", stub);
+					outCode += string.Format("\n\t\t{0}\n\t\t{1}\n", METHOD_NULL_COMMENT, stub);
 				}
 
 				outCode += "\n\t}\n";
