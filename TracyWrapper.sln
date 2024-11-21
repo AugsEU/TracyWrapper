@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TracyWrapper", "TracyWrapper\TracyWrapper.csproj", "{EAF8D734-6F85-4CBA-B79A-3DFD3C37E3AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TracyWrapper", "TracyWrapper\TracyWrapper.csproj", "{EAF8D734-6F85-4CBA-B79A-3DFD3C37E3AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TracyWrapperCodeGen", "TracyWrapperCodeGen\TracyWrapperCodeGen.csproj", "{B900F312-63CA-4478-A431-24F29B50C58F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{EAF8D734-6F85-4CBA-B79A-3DFD3C37E3AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAF8D734-6F85-4CBA-B79A-3DFD3C37E3AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAF8D734-6F85-4CBA-B79A-3DFD3C37E3AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B900F312-63CA-4478-A431-24F29B50C58F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B900F312-63CA-4478-A431-24F29B50C58F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B900F312-63CA-4478-A431-24F29B50C58F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B900F312-63CA-4478-A431-24F29B50C58F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

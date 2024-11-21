@@ -53,8 +53,6 @@ namespace TracyWrapper
 		{
 			if (!mEnabled) return;
 
-			Color displayColor = color.GetValueOrDefault(Color.AliceBlue);
-
 			ulong srcloc = PInvoke.TracyAllocSrclocName(
 								(uint)lineNumber,
 								CString.FromString(sourceFile),
@@ -65,7 +63,11 @@ namespace TracyWrapper
 								(ulong)name.Length);
 
 			PInvoke.TracyCZoneContext ctx = PInvoke.TracyEmitZoneBeginAlloc(srcloc, 1);
-			PInvoke.TracyEmitZoneColor(ctx, GetTracyColorUInt(displayColor));
+
+			if (color.HasValue)
+			{
+				PInvoke.TracyEmitZoneColor(ctx, GetTracyColorUInt(color.Value));
+			}
 
 			mScopeStack.Push(ctx);
 		}
@@ -127,7 +129,7 @@ namespace TracyWrapper
 		/// <param name="sourceFile">Override source file name. Recommended to leave blank for caller's source file name.</param>
 		public ProfileScope(string name, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string function = "", [CallerFilePath] string sourceFile = "")
 		{
-			Profiler.PushProfileZone(name, Color.AliceBlue, lineNumber, function, sourceFile);
+			Profiler.PushProfileZone(name, null, lineNumber, function, sourceFile);
 		}
 
 
