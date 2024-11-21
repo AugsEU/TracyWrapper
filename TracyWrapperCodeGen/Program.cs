@@ -110,7 +110,19 @@ static class Program
 				Console.WriteLine($"Class: {classDeclaration.Identifier.Text}");
 
 				// Class header
-				outCode += string.Format("\n\t{0}\n\t{{", GenerateClassDec(classDeclaration));
+				outCode += string.Format("\n\t{0}\n\t{{\n", GenerateClassDec(classDeclaration));
+
+				// Constants
+				var constants = classDeclaration.DescendantNodes().OfType<FieldDeclarationSyntax>();
+				foreach (FieldDeclarationSyntax? constant in constants)
+				{
+					if(!IsFieldPublicConst(constant))
+					{
+						continue;
+					}
+
+					outCode += string.Format("{0}", constant.ToFullString());
+				}
 
 				// Constructors
 				var constructors = classDeclaration.DescendantNodes().OfType<ConstructorDeclarationSyntax>();
@@ -121,7 +133,7 @@ static class Program
 					// Generate the stub signature (with no implementation)
 					string stub = GenerateConstructorStub(constructor);
 
-					outCode += string.Format("\n\t\t{0}\n\t\t{1}\n", METHOD_NULL_COMMENT, stub);
+					outCode += string.Format("\t\t{0}\n\t\t{1}\n\n", METHOD_NULL_COMMENT, stub);
 				}
 
 				// Methods
@@ -172,6 +184,14 @@ static class Program
 		string baseTypes = classDeclaration.BaseList?.ToString() ?? string.Empty;
 
 		return $"{modifiers} class {className} {baseTypes}".Trim();
+	}
+
+	static bool IsFieldPublicConst(FieldDeclarationSyntax fieldDeclaration)
+	{
+		bool isConst = fieldDeclaration.Modifiers.Any(modifier => modifier.IsKind(SyntaxKind.ConstKeyword));
+		bool isPublic = fieldDeclaration.Modifiers.Any(modifier => modifier.IsKind(SyntaxKind.PublicKeyword));
+
+		return isConst && isPublic;
 	}
 
 	static string GenerateMethodStub(MethodDeclarationSyntax method)
