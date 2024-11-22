@@ -20,7 +20,7 @@ Get on nuget: https://www.nuget.org/packages/TracyWrapper
 Or run in the package manager:
 
 ```
-NuGet\Install-Package TracyWrapper -Version 0.11.1
+NuGet\Install-Package TracyWrapper -Version 0.20.0
 ```
 
 #### Or from source
@@ -30,56 +30,76 @@ NuGet\Install-Package TracyWrapper -Version 0.11.1
 
 ## Usage
 
-### 1. Call the heartbeat function
+### 1. Initialise each thread you wish to profile
 
-The `TracyWrapper.Profiler.HeartBeat();` function needs to be called exactly once per frame. 
+You must call `TracyWrapper.Profiler.InitThread();` exactly ONCE on each thread you wish to profile. You can supply your own custom display name, otherwise the thread's name is used.
+
+E.g.
+```csharp
+// Called once at application start.
+protected override void Initialize()
+{
+	TracyWrapper.Profiler.InitThread();
+
+	/* Init logic */
+}
+```
+
+### 2. Call the heartbeat function(optional)
+
+The `TracyWrapper.Profiler.HeartBeat();` function can be called to mark the end of each frame. Call this right after you have presented to teh screen.
 
 E.g.
 ```csharp
 // Called once per frame.
-protected override void Update(GameTime gameTime)
+protected override void Draw(GameTime gameTime)
 {
-	TracyWrapper.Profiler.HeartBeat();
-
 	/* Game logic goes here */
+
+    TracyWrapper.Profiler.HeartBeat();
 }
 ```
 
-### 2. Push and pop zones.
+### 3. Instrument your functions
 
-Push a zone to begin profiling a section of code. Pop the zone when the section is over. We can provide a name and a color so we can then identify this block when viewing in the profiler.
+Push a zone to begin profiling a section of code. Pop the zone when the section is over. We can provide a name and a color so we can then identify this block when viewing in the profiler. The color can be a System.Drawing.Color, or you can supply a uint directly. TracyWrapper.ZoneC has many preset uint constants you can use.
 
 E.g.
 
 ```csharp
-public void PollInputs(TimeSpan timeStamp)
+public void Update(GameTime gameTime)
 {
-	TracyWrapper.Profiler.PushProfileZone("Inputs", System.Drawing.Color.AliceBlue);
-
+	Profiler.PushProfileZone("Inputs", System.Drawing.Color.AliceBlue);
 	/* Input polling logic. */
+	Profiler.PopProfileZone();
 
-	TracyWrapper.Profiler.PopProfileZone();
+    Profiler.PushProfileZone("Physics update", ZoneC.BLUE_VIOLET);
+    /* Physics update. */
+    Profiler.PopProfileZone();
+
+    // Use a profile scope to automatically pop the profile zone.
+    using (new TracyWrapper.ProfileScope("Tilemap update", ZoneC.RED))
+	{
+		/* Tilemap update.*/
+	}
 }
 ```
 
 Make sure you don't forget to pop the profile zone or the profiler will crash.
 
-### 3. Profile a block using the ProfileScope class
+## Conditional compilation
 
-Push a zone to begin profiling a section of code. Pop the zone when the section is over. This can be more convenient but is less accurate, due to the overhead of allocating `TracyWrapper.ProfileScope`.
+When it comes time to ship your application, you probably don't want to bundle it with the profiling code still enabled. You can either remove the instrumentation code manually, OR use the stubs project.
 
-E.g.
+The stubs project is exactly the same as TracyWrapper but contains none of the implementation, thus you can swap out TracyWrapper for TracyWrapperStubs and your program will compile as before, but you won't have any profiling code.
 
-```csharp
-public void PollInputs(TimeSpan timeStamp)
-{
-	using (new TracyWrapper.ProfileScope("Inputs", System.Drawing.Color.AliceBlue))
-	{
-		/* Input polling logic. This part is measured.*/
-	}
+[![NuGet ver](https://img.shields.io/nuget/v/TracyWrapperStubs)](https://www.nuget.org/packages/TracyWrapperStubs)
+Get on nuget: https://www.nuget.org/packages/TracyWrapperStubs
 
-    /* This code is not measured. */
-}
+Or run in the package manager:
+
+```
+NuGet\Install-Package TracyWrapperStubs -Version 0.20.0
 ```
 
 ## Profiling accuracy
