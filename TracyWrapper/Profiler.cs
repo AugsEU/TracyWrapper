@@ -5,6 +5,9 @@ using Tracy;
 
 namespace TracyWrapper
 {
+	/// <summary>
+	/// Application's profiler. Use this to interact with Tracy
+	/// </summary>
 	public static class Profiler
 	{
 		#region rMembers
