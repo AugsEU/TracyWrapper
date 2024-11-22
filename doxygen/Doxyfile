@@ -2922,3 +2922,5 @@ MSCGEN_TOOL            =
 # command).
 
 MSCFILE_DIRS           =
+
+OPTIMIZE_OUTPUT_FOR_CSHARP = YES
