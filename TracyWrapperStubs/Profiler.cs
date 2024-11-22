@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using System.Drawing;
 namespace TracyWrapper 
 {
 
@@ -16,6 +17,9 @@ namespace TracyWrapper
 
 		/// <summary> This method is a stub that does nothing. </summary>
 		public static void PushProfileZone(string name, uint color = ZoneC.DEFAULT, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string function = "", [CallerFilePath] string sourceFile = "") { }
+
+		/// <summary> This method is a stub that does nothing. </summary>
+		public static void PushProfileZone(string name, Color color, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string function = "", [CallerFilePath] string sourceFile = "") { }
 
 		/// <summary> This method is a stub that does nothing. </summary>
 		public static void PopProfileZone() { }
