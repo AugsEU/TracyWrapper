@@ -87,6 +87,10 @@ public void Update(GameTime gameTime)
 
 Make sure you don't forget to pop the profile zone or the profiler will crash.
 
+## Documentation
+
+For full documentation, check out the github pages: https://augseu.github.io/TracyWrapper/namespace_tracy_wrapper.html
+
 ## Conditional compilation
 
 When it comes time to ship your application, you probably don't want to bundle it with the profiling code still enabled. You can either remove the instrumentation code manually, OR use the stubs project.
