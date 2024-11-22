@@ -71,6 +71,9 @@ static class Program
 			Directory.CreateDirectory(directory);
 		}
 
+		// Convert to CRLF
+		code = code.Replace("\r\n", "\n").Replace("\n", "\r\n");
+
 		// Write the code to the file
 		File.WriteAllText(outputPath, code);
 	}
