@@ -30,7 +30,12 @@ namespace TracyWrapper
 		/// <param name="threadName">Set this for a custom thread display name.</param>
 		public static void InitThread(string? threadName = null)
 		{
-			if(threadName is null)
+			// Init
+			mScopeStack = new Stack<PInvoke.TracyCZoneContext>();
+			mEnabled = true;
+
+			// Set thread name
+			if (threadName is null)
 			{
 				threadName = Thread.CurrentThread.Name;
 
@@ -41,9 +46,6 @@ namespace TracyWrapper
 			}
 
 			SetThreadName(threadName);
-			mScopeStack = new Stack<PInvoke.TracyCZoneContext>();
-
-			mEnabled = true;
 		}
 
 
