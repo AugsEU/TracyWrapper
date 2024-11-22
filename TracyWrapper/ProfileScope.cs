@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Drawing;
 
 namespace TracyWrapper
 {
@@ -17,6 +18,21 @@ namespace TracyWrapper
 		/// <param name="function">Override function name. Recommended to leave blank for caller's function name.</param>
 		/// <param name="sourceFile">Override source file name. Recommended to leave blank for caller's source file name.</param>
 		public ProfileScope(string name, uint color = ZoneC.DEFAULT, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string function = "", [CallerFilePath] string sourceFile = "")
+		{
+			Profiler.PushProfileZone(name, color, lineNumber, function, sourceFile);
+		}
+
+
+
+		/// <summary>
+		/// Create a profile scope object.
+		/// </summary>
+		/// <param name="name">Display name</param>
+		/// <param name="color">Display color</param>
+		/// <param name="lineNumber">Override line number. Recommended to leave blank for caller's line number.</param>
+		/// <param name="function">Override function name. Recommended to leave blank for caller's function name.</param>
+		/// <param name="sourceFile">Override source file name. Recommended to leave blank for caller's source file name.</param>
+		public ProfileScope(string name, Color color, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string function = "", [CallerFilePath] string sourceFile = "")
 		{
 			Profiler.PushProfileZone(name, color, lineNumber, function, sourceFile);
 		}

@@ -1,5 +1,6 @@
 ﻿using bottlenoselabs.C2CS.Runtime;
 using System.Runtime.CompilerServices;
+using System.Drawing;
 using Tracy;
 
 namespace TracyWrapper
@@ -97,6 +98,7 @@ namespace TracyWrapper
 
 
 
+
 		#region rCPUZones
 
 		/// <summary>
@@ -128,6 +130,23 @@ namespace TracyWrapper
 			}
 
 			mScopeStack.Push(ctx);
+		}
+
+
+
+		/// <summary>
+		/// Begin profile region.
+		/// </summary>
+		/// <param name="name">Display name</param>
+		/// <param name="color">Display color</param>
+		/// <param name="lineNumber">Override line number. Recommended to leave blank for caller's line number.</param>
+		/// <param name="function">Override function name. Recommended to leave blank for caller's function name.</param>
+		/// <param name="sourceFile">Override source file name. Recommended to leave blank for caller's source file name.</param>
+		public static void PushProfileZone(string name, Color color, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string function = "", [CallerFilePath] string sourceFile = "")
+		{
+			if (!mEnabled) return;
+
+			PushProfileZone(name, (uint)color.ToArgb(), lineNumber, function, sourceFile);
 		}
 
 
