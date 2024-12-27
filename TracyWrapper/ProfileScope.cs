@@ -1,5 +1,5 @@
-﻿using System.Runtime.CompilerServices;
-using System.Drawing;
+﻿using System.Drawing;
+using System.Runtime.CompilerServices;
 
 namespace TracyWrapper
 {

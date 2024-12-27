@@ -1,6 +1,6 @@
 ﻿using bottlenoselabs.C2CS.Runtime;
-using System.Runtime.CompilerServices;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 using Tracy;
 
 namespace TracyWrapper
@@ -13,7 +13,7 @@ namespace TracyWrapper
 		#region rMembers
 
 		// These are threadlocal. But we add an initialiser to stop a warning. But! The initialiser is ignored, calling InitThread is required for each thread.
-		[ThreadStatic] 
+		[ThreadStatic]
 		private static Stack<PInvoke.TracyCZoneContext> mScopeStack = new Stack<PInvoke.TracyCZoneContext>();
 
 		[ThreadStatic]
@@ -129,7 +129,7 @@ namespace TracyWrapper
 
 			PInvoke.TracyCZoneContext ctx = PInvoke.TracyEmitZoneBeginAlloc(srcloc, 1);
 
-			if(color != ZoneC.DEFAULT)
+			if (color != ZoneC.DEFAULT)
 			{
 				PInvoke.TracyEmitZoneColor(ctx, color);
 			}

@@ -1,6 +1,6 @@
-using System.Runtime.CompilerServices;
 using System.Drawing;
-namespace TracyWrapper 
+using System.Runtime.CompilerServices;
+namespace TracyWrapper
 {
 
 	public class ProfileScope : IDisposable
