@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Runtime.CompilerServices;
 using Tracy;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TracyWrapper
 {
@@ -10,14 +11,87 @@ namespace TracyWrapper
 	/// </summary>
 	public static class Profiler
 	{
+		#region rTypes
+
+		struct ScopeInfo(string name, uint lineNum, string func, string sourceFile) : IEquatable<ScopeInfo>
+		{
+			public string mName = name;
+			public uint mLineNumber = lineNum;
+			public string mFunction = func;
+			public string mSourceFile = sourceFile;
+
+			public ulong AllocStr()
+			{
+				return PInvoke.TracyAllocSrclocName(
+								mLineNumber,
+								CString.FromString(mSourceFile),
+								(ulong)mSourceFile.Length,
+								CString.FromString(mFunction),
+								(ulong)mFunction.Length,
+								CString.FromString(mName),
+								(ulong)mName.Length);
+			}
+
+			public override int GetHashCode()
+			{
+				int hash = 17;
+				hash = hash * 31 + mName.GetHashCode();
+				hash = hash * 37 + mLineNumber.GetHashCode();
+				hash = hash * 41 + mFunction.GetHashCode();
+				hash = hash * 43 + mSourceFile.GetHashCode();
+				return hash;
+			}
+
+			public bool Equals(ScopeInfo other)
+			{
+				return mName == other.mName &&
+					   mLineNumber == other.mLineNumber &&
+					   mFunction == other.mFunction &&
+					   mSourceFile == other.mSourceFile;
+			}
+
+			public override bool Equals(object? obj)
+			{
+				return obj is ScopeInfo && Equals((ScopeInfo)obj);
+			}
+
+			public static bool operator ==(ScopeInfo left, ScopeInfo right)
+			{
+				return left.Equals(right);
+			}
+
+			public static bool operator !=(ScopeInfo left, ScopeInfo right)
+			{
+				return !(left == right);
+			}
+		}
+
+		enum ConnectionStatus
+		{
+			Connected,
+			Disconnected
+		}
+
+		#endregion rTypes
+
+
+
+
+
 		#region rMembers
 
 		// These are threadlocal. But we add an initialiser to stop a warning. But! The initialiser is ignored, calling InitThread is required for each thread.
 		[ThreadStatic]
-		private static Stack<PInvoke.TracyCZoneContext> mScopeStack = new Stack<PInvoke.TracyCZoneContext>();
+		private static Stack<PInvoke.TracyCZoneCtx> mScopeStack = new();
 
 		[ThreadStatic]
 		private static bool mEnabled;
+
+		[ThreadStatic]
+		private static ConnectionStatus mConnectionStatus;
+
+		[ThreadStatic]
+		private static Dictionary<ScopeInfo, ulong> mScopeInfoToStrAllocs = new();
 
 		#endregion rMembers
 
@@ -34,7 +108,8 @@ namespace TracyWrapper
 		public static void InitThread(string? threadName = null)
 		{
 			// Init
-			mScopeStack = new Stack<PInvoke.TracyCZoneContext>();
+			mScopeStack = new();
+			mScopeInfoToStrAllocs = new();
 			mEnabled = true;
 
 			// Set thread name
@@ -49,6 +124,8 @@ namespace TracyWrapper
 			}
 
 			SetThreadName(threadName);
+
+			
 		}
 
 
@@ -85,7 +162,7 @@ namespace TracyWrapper
 
 
 
-		#region rFrame
+		#region rUtils
 
 		/// <summary>
 		/// This needs to be called once every frame.
@@ -98,7 +175,17 @@ namespace TracyWrapper
 			PInvoke.TracyEmitFrameMark(CString.FromString(name));
 		}
 
-		#endregion rFrame
+
+
+		/// <summary>
+		/// Check if we are connected.
+		/// </summary>
+		private static void RefreshConnectionStatus()
+		{
+			mConnectionStatus = PInvoke.TracyConnected() != 0 ? ConnectionStatus.Connected : ConnectionStatus.Disconnected;
+		}
+
+		#endregion rUtils
 
 
 
@@ -118,23 +205,42 @@ namespace TracyWrapper
 		{
 			if (!mEnabled) return;
 
-			ulong srcloc = PInvoke.TracyAllocSrclocName(
-								(uint)lineNumber,
-								CString.FromString(sourceFile),
-								(ulong)sourceFile.Length,
-								CString.FromString(function),
-								(ulong)function.Length,
-								CString.FromString(name),
-								(ulong)name.Length);
+			ScopeInfo info = new ScopeInfo(name, (uint)lineNumber, function, sourceFile);
 
-			PInvoke.TracyCZoneContext ctx = PInvoke.TracyEmitZoneBeginAlloc(srcloc, 1);
-
-			if (color != ZoneC.DEFAULT)
+			ulong strAlloc = 0;
+			if (!mScopeInfoToStrAllocs.TryGetValue(info, out strAlloc))
 			{
-				PInvoke.TracyEmitZoneColor(ctx, color);
+				strAlloc = info.AllocStr();
+				mScopeInfoToStrAllocs.Add(info, strAlloc);
 			}
 
-			mScopeStack.Push(ctx);
+			if (mScopeStack.Count == 0)
+			{
+				// We only refresh this when the scope is zero. Otherwise it could connect halfway through an active block.
+				RefreshConnectionStatus();
+			}
+
+			switch (mConnectionStatus)
+			{
+				case ConnectionStatus.Connected:
+				{
+					PInvoke.TracyCZoneCtx ctx = PInvoke.TracyEmitZoneBeginAlloc(strAlloc, 1);
+
+					if (color != ZoneC.DEFAULT)
+					{
+						PInvoke.TracyEmitZoneColor(ctx, color);
+					}
+
+					mScopeStack.Push(ctx);
+					break;
+				}
+				case ConnectionStatus.Disconnected:
+				{
+					// Push dummy data.
+					mScopeStack.Push(new PInvoke.TracyCZoneCtx());
+					break;
+				}
+			}
 		}
 
 
@@ -163,9 +269,17 @@ namespace TracyWrapper
 		{
 			if (!mEnabled) return;
 
-			PInvoke.TracyCZoneContext ctx = mScopeStack.Pop();
+			PInvoke.TracyCZoneCtx ctx = mScopeStack.Pop();
 
-			PInvoke.TracyEmitZoneEnd(ctx);
+			switch (mConnectionStatus)
+			{
+				case ConnectionStatus.Connected:
+					PInvoke.TracyEmitZoneEnd(ctx);
+					break;
+				case ConnectionStatus.Disconnected:
+					// Do nothing with dummy data.
+					break;
+			}
 		}
 
 		#endregion rCPUZones

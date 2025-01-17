@@ -34,6 +34,11 @@
             </summary>
             <param name="name">Display name</param>
         </member>
+        <member name="M:TracyWrapper.Profiler.RefreshConnectionStatus">
+            <summary>
+            Check if we are connected.
+            </summary>
+        </member>
         <member name="M:TracyWrapper.Profiler.PushProfileZone(System.String,System.UInt32,System.Int32,System.String,System.String)">
             <summary>
             Begin profile region.
