@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Runtime.CompilerServices;
 using Tracy;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TracyWrapper
 {
