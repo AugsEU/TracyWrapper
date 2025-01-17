@@ -101,7 +101,7 @@ static class Program
 
 		foreach (NamespaceDeclarationSyntax? _namespace in namespaces)
 		{
-			outCode += string.Format("namespace {0} \n{{\n", _namespace.Name);
+			outCode += string.Format("namespace {0}\n{{\n", _namespace.Name);
 
 			// Traverse the syntax tree to find classes and methods
 			var classDeclarations = _namespace.DescendantNodes().OfType<ClassDeclarationSyntax>();
@@ -144,6 +144,11 @@ static class Program
 				foreach (MethodDeclarationSyntax? method in methods)
 				{
 					if (!IsMethodPublic(method))
+					{
+						continue;
+					}
+
+					if (method.Parent != classDeclaration)
 					{
 						continue;
 					}
@@ -203,7 +208,13 @@ static class Program
 		var modifiers = string.Join(" ", method.Modifiers.Select(m => m.Text));
 		var returnType = method.ReturnType.ToString();
 		var methodName = method.Identifier.Text;
-		var parameters = string.Join(", ", method.ParameterList.Parameters.Select(p => p.ToString()));
+		var parameters = string.Join(", ", method.ParameterList.Parameters.Select(p =>
+		{
+			var type = p.Type?.ToString(); // The parameter type
+			var name = p.Identifier.Text; // The parameter name
+			var defaultValue = p.Default != null ? $" {p.Default}" : ""; // The default value, if any
+			return $"{type} {name}{defaultValue}";
+		}));
 
 		return $"{modifiers} {returnType} {methodName}({parameters}) {{ }}";
 	}
@@ -218,7 +229,13 @@ static class Program
 		// Extract the constructor signature
 		var modifiers = string.Join(" ", constructor.Modifiers.Select(m => m.Text));
 		var constructorName = constructor.Identifier.Text;
-		var parameters = string.Join(", ", constructor.ParameterList.Parameters.Select(p => p.ToString()));
+		var parameters = string.Join(", ", constructor.ParameterList.Parameters.Select(p =>
+		{
+			var type = p.Type?.ToString(); // The parameter type
+			var name = p.Identifier.Text; // The parameter name
+			var defaultValue = p.Default != null ? $" {p.Default}" : ""; // The default value, if any
+			return $"{type} {name}{defaultValue}";
+		}));
 
 		return $"{modifiers} {constructorName}({parameters}) {{ }}";
 	}
