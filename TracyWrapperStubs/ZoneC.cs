@@ -1,4 +1,4 @@
-namespace TracyWrapper 
+namespace TracyWrapper
 {
 
 	public class ZoneC

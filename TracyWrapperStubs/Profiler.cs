@@ -16,10 +16,10 @@ namespace TracyWrapper
 		public static void HeartBeat(string name = "Frame") { }
 
 		/// <summary> This method is a stub that does nothing. </summary>
-		public static void PushProfileZone(string name, uint color = ZoneC.DEFAULT, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string function = "", [CallerFilePath] string sourceFile = "") { }
+		public static void PushProfileZone(string name, uint color = ZoneC.DEFAULT, int lineNumber = 0, string function = "", string sourceFile = "") { }
 
 		/// <summary> This method is a stub that does nothing. </summary>
-		public static void PushProfileZone(string name, Color color, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string function = "", [CallerFilePath] string sourceFile = "") { }
+		public static void PushProfileZone(string name, Color color, int lineNumber = 0, string function = "", string sourceFile = "") { }
 
 		/// <summary> This method is a stub that does nothing. </summary>
 		public static void PopProfileZone() { }
