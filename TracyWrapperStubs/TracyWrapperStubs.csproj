@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Title>TracyWrapperStubs</Title>
-    <VersionPrefix>0.20.0</VersionPrefix>
+    <VersionPrefix>0.20.1</VersionPrefix>
     <Version>$(VersionPrefix)</Version>
     <Description>A version of the TracyWrapper API with no implementation.</Description>
     <PackageProjectUrl>https://github.com/AugsEU/TracyWrapper</PackageProjectUrl>

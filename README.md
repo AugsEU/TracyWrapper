@@ -20,7 +20,7 @@ Get on nuget: https://www.nuget.org/packages/TracyWrapper
 Or run in the package manager:
 
 ```
-NuGet\Install-Package TracyWrapper -Version 0.20.0
+NuGet\Install-Package TracyWrapper -Version 0.20.1
 ```
 
 #### Or from source
@@ -103,7 +103,7 @@ Get on nuget: https://www.nuget.org/packages/TracyWrapperStubs
 Or run in the package manager:
 
 ```
-NuGet\Install-Package TracyWrapperStubs -Version 0.20.0
+NuGet\Install-Package TracyWrapperStubs -Version 0.20.1
 ```
 
 ## Profiling accuracy
