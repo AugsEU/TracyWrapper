@@ -19,18 +19,6 @@ namespace TracyWrapper
 			public string mFunction = func;
 			public string mSourceFile = sourceFile;
 
-			public ulong AllocStr()
-			{
-				return PInvoke.TracyAllocSrclocName(
-								mLineNumber,
-								CString.FromString(mSourceFile),
-								(ulong)mSourceFile.Length,
-								CString.FromString(mFunction),
-								(ulong)mFunction.Length,
-								CString.FromString(mName),
-								(ulong)mName.Length);
-			}
-
 			public override int GetHashCode()
 			{
 				int hash = 17;
@@ -65,6 +53,32 @@ namespace TracyWrapper
 			}
 		}
 
+		struct ScopeInfoCStr(ref ScopeInfo info)
+		{
+			public CString mName = CString.FromString(info.mName);
+			public ulong mNameLen = (ulong)info.mName.Length;
+
+			public uint mLineNumber = info.mLineNumber;
+
+			public CString mFunction = CString.FromString(info.mFunction);
+			public ulong mFunctionLen = (ulong)info.mFunction.Length;
+
+			public CString mSourceFile = CString.FromString(info.mSourceFile);
+			public ulong mSourceFileLen = (ulong)info.mSourceFile.Length;
+
+			public ulong AllocSrcloc()
+			{
+				return PInvoke.TracyAllocSrclocName(
+								mLineNumber,
+								mSourceFile,
+								mSourceFileLen,
+								mFunction,
+								mFunctionLen,
+								mName,
+								mNameLen);
+			}
+		}
+
 		enum ConnectionStatus
 		{
 			Connected,
@@ -90,7 +104,7 @@ namespace TracyWrapper
 		private static ConnectionStatus mConnectionStatus;
 
 		[ThreadStatic]
-		private static Dictionary<ScopeInfo, ulong> mScopeInfoToStrAllocs = new();
+		private static Dictionary<ScopeInfo, ScopeInfoCStr> mScopeInfoToStrAllocs = new();
 
 		#endregion rMembers
 
@@ -204,15 +218,6 @@ namespace TracyWrapper
 		{
 			if (!mEnabled) return;
 
-			ScopeInfo info = new ScopeInfo(name, (uint)lineNumber, function, sourceFile);
-
-			ulong strAlloc = 0;
-			if (!mScopeInfoToStrAllocs.TryGetValue(info, out strAlloc))
-			{
-				strAlloc = info.AllocStr();
-				mScopeInfoToStrAllocs.Add(info, strAlloc);
-			}
-
 			if (mScopeStack.Count == 0)
 			{
 				// We only refresh this when the scope is zero. Otherwise it could connect halfway through an active block.
@@ -223,7 +228,17 @@ namespace TracyWrapper
 			{
 				case ConnectionStatus.Connected:
 				{
-					PInvoke.TracyCZoneCtx ctx = PInvoke.TracyEmitZoneBeginAlloc(strAlloc, 1);
+					ScopeInfo info = new ScopeInfo(name, (uint)lineNumber, function, sourceFile);
+
+					ScopeInfoCStr infoCStr;
+					if (!mScopeInfoToStrAllocs.TryGetValue(info, out infoCStr))
+					{
+						infoCStr = new ScopeInfoCStr(ref info);
+						mScopeInfoToStrAllocs.Add(info, infoCStr);
+					}
+					ulong srcLocAlloc = infoCStr.AllocSrcloc();
+
+					PInvoke.TracyCZoneCtx ctx = PInvoke.TracyEmitZoneBeginAlloc(srcLocAlloc, 1);
 
 					if (color != ZoneC.DEFAULT)
 					{
