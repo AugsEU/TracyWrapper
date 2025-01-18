@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <VersionPrefix>0.20.1</VersionPrefix>
+    <VersionPrefix>0.20.2</VersionPrefix>
     <Version>$(VersionPrefix)</Version>
     <Title>TracyWrapper</Title>
     <Description>A C# wrapper to easily interop with Tracy Profiler </Description>
