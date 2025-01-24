@@ -198,6 +198,14 @@ namespace TracyWrapper
 			mConnectionStatus = PInvoke.TracyConnected() != 0 ? ConnectionStatus.Connected : ConnectionStatus.Disconnected;
 		}
 
+		public static void SleepUntilConnected()
+		{
+			while(mConnectionStatus == ConnectionStatus.Disconnected)
+			{
+				RefreshConnectionStatus();
+			}
+		}
+
 		#endregion rUtils
 
 
