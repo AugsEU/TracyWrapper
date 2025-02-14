@@ -5,6 +5,7 @@
 	/// </summary>
 	public class ZoneC
 	{
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public const uint INDIAN_RED                = 0xCD5C5Cu;
 		public const uint LIGHT_CORAL               = 0xF08080u;
 		public const uint SALMON                    = 0xFA8072u;
@@ -146,5 +147,6 @@
 		public const uint DARK_SLATE_GRAY           = 0x2F4F4Fu;
 		public const uint BLACK                     = 0x010101u; // Note: 0x000000 is a special value so we use a thing close to black.
 		public const uint DEFAULT                   = 0x000000u;
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }
