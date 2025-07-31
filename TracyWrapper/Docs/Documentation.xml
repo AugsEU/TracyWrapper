@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TracyWrapper</name>
+    </assembly>
+    <members>
+        <member name="T:TracyWrapper.Profiler">
+            <summary>
+            Application's profiler. Use this to interact with Tracy
+            </summary>
+        </member>
+        <member name="M:TracyWrapper.Profiler.InitThread(System.String)">
+            <summary>
+            Call this once per thread before starting the profiler.
+            </summary>
+            <param name="threadName">Set this for a custom thread display name.</param>
+        </member>
+        <member name="M:TracyWrapper.Profiler.SetThreadName(System.String)">
+            <summary>
+            Inform tracy of custom thread name
+            </summary>
+            <param name="name"></param>
+        </member>
+        <member name="M:TracyWrapper.Profiler.SetEnabled(System.Boolean)">
+            <summary>
+            Turn profiler on/off.
+            </summary>
+            <param name="enabled">Set to true to enable profiler.</param>
+            <exception cref="T:System.Exception">Cannot disable profiler while profiling scopes are pushed.</exception>
+        </member>
+        <member name="M:TracyWrapper.Profiler.HeartBeat(System.String)">
+            <summary>
+            This needs to be called once every frame.
+            </summary>
+            <param name="name">Display name</param>
+        </member>
+        <member name="M:TracyWrapper.Profiler.RefreshConnectionStatus">
+            <summary>
+            Check if we are connected.
+            </summary>
+        </member>
+        <member name="M:TracyWrapper.Profiler.PushProfileZone(System.String,System.UInt32,System.Int32,System.String,System.String)">
+            <summary>
+            Begin profile region.
+            </summary>
+            <param name="name">Display name</param>
+            <param name="color">Display color</param>
+            <param name="lineNumber">Override line number. Recommended to leave blank for caller's line number.</param>
+            <param name="function">Override function name. Recommended to leave blank for caller's function name.</param>
+            <param name="sourceFile">Override source file name. Recommended to leave blank for caller's source file name.</param>
+        </member>
+        <member name="M:TracyWrapper.Profiler.PushProfileZone(System.String,System.Drawing.Color,System.Int32,System.String,System.String)">
+            <summary>
+            Begin profile region.
+            </summary>
+            <param name="name">Display name</param>
+            <param name="color">Display color</param>
+            <param name="lineNumber">Override line number. Recommended to leave blank for caller's line number.</param>
+            <param name="function">Override function name. Recommended to leave blank for caller's function name.</param>
+            <param name="sourceFile">Override source file name. Recommended to leave blank for caller's source file name.</param>
+        </member>
+        <member name="M:TracyWrapper.Profiler.PopProfileZone">
+            <summary>
+            End previous profile region.
+            </summary>
+        </member>
+        <member name="T:TracyWrapper.ProfileScope">
+            <summary>
+            Object which can profile a scope automatically.
+            Use inside a "using" statement.
+            </summary>
+        </member>
+        <member name="M:TracyWrapper.ProfileScope.#ctor(System.String,System.UInt32,System.Int32,System.String,System.String)">
+            <summary>
+            Create a profile scope object.
+            </summary>
+            <param name="name">Display name</param>
+            <param name="color">Display color</param>
+            <param name="lineNumber">Override line number. Recommended to leave blank for caller's line number.</param>
+            <param name="function">Override function name. Recommended to leave blank for caller's function name.</param>
+            <param name="sourceFile">Override source file name. Recommended to leave blank for caller's source file name.</param>
+        </member>
+        <member name="M:TracyWrapper.ProfileScope.#ctor(System.String,System.Drawing.Color,System.Int32,System.String,System.String)">
+            <summary>
+            Create a profile scope object.
+            </summary>
+            <param name="name">Display name</param>
+            <param name="color">Display color</param>
+            <param name="lineNumber">Override line number. Recommended to leave blank for caller's line number.</param>
+            <param name="function">Override function name. Recommended to leave blank for caller's function name.</param>
+            <param name="sourceFile">Override source file name. Recommended to leave blank for caller's source file name.</param>
+        </member>
+        <member name="M:TracyWrapper.ProfileScope.#ctor(System.String,System.Int32,System.String,System.String)">
+            <summary>
+            Create a profile scope object.
+            </summary>
+            <param name="name">Display name</param>
+            <param name="lineNumber">Override line number. Recommended to leave blank for caller's line number.</param>
+            <param name="function">Override function name. Recommended to leave blank for caller's function name.</param>
+            <param name="sourceFile">Override source file name. Recommended to leave blank for caller's source file name.</param>
+        </member>
+        <member name="M:TracyWrapper.ProfileScope.Dispose">
+            <summary>
+            Dispose of the profile scope and end the timing.
+            </summary>
+        </member>
+        <member name="T:TracyWrapper.ZoneC">
+            <summary>
+            Colors for zones
+            </summary>
+        </member>
+    </members>
+</doc>
