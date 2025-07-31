@@ -16,7 +16,7 @@
     <PackageTags>Profiler, C#</PackageTags>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <DocumentationFile>C:\Users\Augus\Documents\Programming\MonoGame\GalaxyGame\MugEngine\TracyWrapper\Docs\Documentation.xml</DocumentationFile>
+    <DocumentationFile>Docs\Documentation.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
